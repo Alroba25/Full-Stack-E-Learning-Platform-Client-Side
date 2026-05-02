@@ -7,3 +7,25 @@ export interface LoginState {
   email: string;
   password: string;
 }
+export interface CourseState {
+  id: number;
+  title: string;
+  description: string;
+  instructor: {
+    name: string;
+  };
+  price: number;
+  isFree: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export interface LessonState {
+  id: number;
+  title: string;
+  type: string;
+  videoUrl: string;
+  content: string;
+  duration: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

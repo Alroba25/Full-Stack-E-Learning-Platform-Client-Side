@@ -1,15 +1,37 @@
 import { toast } from "sonner";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 export const addToken = (token: string) => {
-  return localStorage.setItem("token", token);
+  if (typeof window !== "undefined") {
+    return localStorage.setItem("token", token);
+  }
 };
+
 export const removeToken = () => {
-  return localStorage.removeItem("token");
+  if (typeof window !== "undefined") {
+    return localStorage.removeItem("token");
+  }
 };
+
 export const getToken = () => {
-  return localStorage.getItem("token");
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("token");
+  }
+  return null;
 };
+
+// Helper for handling unauthorized access or expired tokens
+const handleUnauthorized = (router?: any, message?: string) => {
+  removeToken();
+  if (router) {
+    router.push("/login");
+  }
+  toast.error(message || "Session expired. Please login again.", {
+    duration: 2000,
+  });
+};
+
 export const SubmitHandler = async (
   e: React.FormEvent,
   userData: any,
@@ -29,10 +51,132 @@ export const SubmitHandler = async (
     if (res.ok) {
       toast.success(data.message, {
         duration: 1000,
-        onAutoClose: () => router.push("/courses"),
+        onAutoClose: () => {
+          if (router) {
+            router.push("/courses");
+          }
+        },
       });
       addToken(data.token);
     } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+      } else {
+        toast.error(data.message, {
+          duration: 1000,
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllCourses = async (router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/courses`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getCourse = async (id: string, router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/course/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getCourseLessons = async (courseId: string, router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/course/${courseId}/lessons`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const enrollInCourse = async (courseId: string, router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/enroll/${courseId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+      });
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
       toast.error(data.message, {
         duration: 1000,
       });

@@ -1,46 +1,52 @@
 "use client";
-import { registerInputs } from "@/Data";
-import { useCallback, useState } from "react";
-import { FormState } from "@/Interfaces";
+
+import { useState, useCallback } from "react";
 import Link from "next/link";
-import styles from "../auth.module.css";
+import { registerInputs } from "@/Data";
 import { SubmitHandler } from "@/Lib";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useRouter } from "next/navigation";
+
+interface FormState {
+  [key: string]: string;
+}
 
 export default function Register() {
-  const [formData, setFormData] = useState({
+  const router = useRouter();
+  const [formData, setFormData] = useState<FormState>({
     name: "",
     email: "",
     password: "",
   });
-
   const [isInstructor, setIsInstructor] = useState<boolean>(false);
 
-  const handelChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-    },
-    [formData],
-  );
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       if (isInstructor) {
-        SubmitHandler(e, formData, "/register/instructor");
+        SubmitHandler(e, formData, "/register/instructor", router);
         setFormData({ name: "", email: "", password: "" });
         return;
       }
-      SubmitHandler(e, formData, "/register");
+      SubmitHandler(e, formData, "/register", router);
       setFormData({ name: "", email: "", password: "" });
     },
-    [formData, isInstructor],
+    [formData, isInstructor, router],
   );
-  return (
-    <div className={styles.container}>
-      <div className={styles.glowBackground}></div>
-      <div className={styles.glowBackground2}></div>
 
-      <Link href="/" className={styles.backLink}>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white font-sans relative overflow-hidden p-8">
+      {/* Background glow effects */}
+      <div className="absolute top-[20%] left-[10%] w-[50vw] h-[50vw] rounded-full z-0 pointer-events-none bg-[radial-gradient(circle,rgba(138,43,226,0.15)_0%,rgba(0,0,0,0)_70%)]"></div>
+      <div className="absolute bottom-[20%] right-[10%] w-[60vw] h-[60vw] rounded-full z-0 pointer-events-none bg-[radial-gradient(circle,rgba(0,255,255,0.1)_0%,rgba(0,0,0,0)_70%)]"></div>
+
+      <Link
+        href="/"
+        className="absolute top-8 left-8 text-[#a0a0a0] font-semibold text-sm flex items-center gap-2 hover:text-white transition-colors z-20"
+      >
         <svg
           width="16"
           height="16"
@@ -51,38 +57,39 @@ export default function Register() {
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
+          <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         Back to Home
       </Link>
 
-      <div className={styles.authCard}>
-        <div className={styles.logo}>E-Platform</div>
-        <h1 className={styles.title}>Create Account</h1>
-        <p className={styles.subtitle}>Join thousands of learners today</p>
+      <div className="relative z-10 w-full max-w-[450px] p-12 rounded-[24px] bg-[#141414]/60 backdrop-blur-2xl border border-white/10 shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-500">
+        <div className="text-3xl font-extrabold text-center mb-2 bg-linear-to-r from-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-tighter">
+          E-Platform
+        </div>
+        <h1 className="text-center text-2xl font-bold mb-2 text-white">Create Account</h1>
+        <p className="text-center text-[0.95rem] text-[#a0a0a0] mb-10">
+          Join thousands of learners worldwide
+        </p>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-6">
           {registerInputs.map((input) => (
-            <div key={input.id} className={styles.formGroup}>
-              <label htmlFor={input.id} className={styles.label}>
+            <div key={input.id}>
+              <label htmlFor={input.id} className="block text-sm font-semibold mb-2 text-[#d0d0d0]">
                 {input.label}
               </label>
               <input
-                className={styles.input}
                 type={input.type}
                 id={input.id}
                 name={input.name}
                 placeholder={input.placeholder}
-                value={formData[input.name as keyof FormState] || ""}
-                onChange={handelChange}
+                className="w-full px-4 py-3.5 bg-black/30 border border-white/10 rounded-xl text-white text-base transition-all outline-none focus:border-[#4facfe] focus:ring-4 focus:ring-[#4facfe]/20 focus:bg-black/50 placeholder:text-[#666]"
+                value={formData[input.name] || ""}
+                onChange={handleChange}
               />
             </div>
           ))}
-          <div
-            className={styles.formGroup}
-            style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-          >
+
+          <div className="flex items-center gap-2 py-2">
             <Checkbox
               id="instructor-checkbox"
               checked={isInstructor}
@@ -90,20 +97,23 @@ export default function Register() {
             />
             <label
               htmlFor="instructor-checkbox"
-              className={styles.label}
-              style={{ marginBottom: 0, cursor: "pointer" }}
+              className="text-sm font-semibold text-[#d0d0d0] cursor-pointer"
             >
               Join as an Instructor
             </label>
           </div>
-          <button className={styles.submitBtn} type="submit">
+
+          <button
+            className="w-full py-4 bg-linear-to-br from-[#667eea] to-[#764ba2] rounded-xl text-white font-bold text-lg hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(118,75,162,0.4)] transition-all mt-4"
+            type="submit"
+          >
             Register
           </button>
         </form>
 
-        <div className={styles.footerText}>
+        <div className="text-center mt-8 text-sm text-[#a0a0a0]">
           Already have an account?{" "}
-          <Link href="/login" className={styles.link}>
+          <Link href="/login" className="text-[#00f2fe] font-semibold hover:underline">
             Log in
           </Link>
         </div>
