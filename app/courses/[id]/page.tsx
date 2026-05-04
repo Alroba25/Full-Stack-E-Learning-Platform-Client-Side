@@ -4,6 +4,7 @@ import { enrollInCourse, getCourse, getToken, getMyCourses } from "@/Lib";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, use } from "react";
 import Navbar from "@/components/Navbar";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 import {
   Star,
   Users,
@@ -81,11 +82,7 @@ export default function CoursePage({
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#4facfe]"></div>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   return (

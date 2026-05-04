@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import { CourseState } from "@/Interfaces";
 import { PlayCircle, CheckCircle, Menu, X, ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 
 const getYouTubeId = (url: string) => {
   if (!url) return null;
@@ -125,14 +126,7 @@ function LearningContent() {
   }, [courseId, token, router]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#050505] flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#4facfe]"></div>
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
   console.log("course", course);
   console.log("lessons", activeLesson);
@@ -353,11 +347,7 @@ function LearningContent() {
 export default function LearningPage() {
   return (
     <Suspense
-      fallback={
-        <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#4facfe]"></div>
-        </div>
-      }
+      fallback={<LoadingSkeleton />}
     >
       <LearningContent />
     </Suspense>

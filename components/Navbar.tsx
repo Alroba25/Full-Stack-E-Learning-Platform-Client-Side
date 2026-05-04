@@ -26,7 +26,7 @@ export default function Navbar() {
         href="/"
         className="text-2xl font-heading font-extrabold bg-linear-to-r from-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-tighter hover:opacity-80 transition-opacity"
       >
-        E-Platform
+        <img src="/logo.png" alt="Logo" className="h-18 w-auto object-contain" />
       </Link>
 
       <div className="hidden md:flex gap-10">

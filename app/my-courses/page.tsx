@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { getMyCourses, getToken } from "@/Lib";
 import Navbar from "@/components/Navbar";
 import { CourseState } from "@/Interfaces";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 import Link from "next/link";
 
 export default function MyCourses() {
   const token = getToken();
   const router = useRouter();
   const [courses, setCourses] = useState<CourseState[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!token) {
@@ -17,12 +19,20 @@ export default function MyCourses() {
       return;
     }
     const fetchMyCourses = async () => {
-      const data = await getMyCourses(router);
-      setCourses(data?.enrollments || []);
+      try {
+        const data = await getMyCourses(router);
+        setCourses(data?.enrollments || []);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchMyCourses();
   }, []);
   console.log(courses);
+
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
   return (
     <div className="min-h-screen flex flex-col bg-[#050505] text-white font-sans relative overflow-x-hidden">
       {/* Background glow effects */}

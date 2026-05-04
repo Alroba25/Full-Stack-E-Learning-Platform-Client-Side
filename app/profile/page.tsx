@@ -3,6 +3,7 @@ import { UserState } from "@/Interfaces";
 import { getProfile, getMyCourses, getToken, removeToken } from "@/Lib";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 import {
   UserRound,
   BookOpen,
@@ -11,6 +12,7 @@ import {
   Calendar,
   LogOut,
   ChevronRight,
+  LayoutDashboard,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -60,14 +62,7 @@ export default function ProfilePage() {
   }, 0);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#050505] flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#4facfe]"></div>
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   return (
@@ -141,10 +136,28 @@ export default function ProfilePage() {
         {/* Right Main Content */}
         <div className="w-full lg:w-2/3 flex flex-col gap-8">
           <div>
-            <h1 className="text-4xl font-extrabold mb-2 tracking-tighter">
-              My Dashboard
-            </h1>
-            <p className="text-[#888] text-lg">
+            <div className="flex justify-between items-center flex-wrap gap-4">
+              <h1 className="text-4xl font-extrabold mb-2 tracking-tighter">
+                My Dashboard
+              </h1>
+              {profile?.user?.role === "instructor" && (
+                <Link
+                  href="/instructor-dashboard"
+                  className="group flex items-center gap-2 bg-linear-to-r from-[#a435f0]/20 to-[#8710d8]/20 hover:from-[#a435f0]/40 hover:to-[#8710d8]/40 border border-[#a435f0]/30 px-5 py-2.5 rounded-xl text-white font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(164,53,240,0.3)] hover:-translate-y-0.5"
+                >
+                  <LayoutDashboard
+                    size={18}
+                    className="text-[#a435f0] group-hover:text-white transition-colors"
+                  />
+                  <span>Instructor Dashboard</span>
+                  <ChevronRight
+                    size={16}
+                    className="text-[#888] group-hover:text-white group-hover:translate-x-1 transition-all"
+                  />
+                </Link>
+              )}
+            </div>
+            <p className="mt-5 text-[#888] text-lg">
               Welcome back! Track your progress and jump right back into
               learning.
             </p>
