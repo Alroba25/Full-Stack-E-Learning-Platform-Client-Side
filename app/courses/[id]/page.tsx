@@ -1,6 +1,6 @@
 "use client";
 import { CourseState } from "@/Interfaces";
-import { enrollInCourse, getCourse, getToken } from "@/Lib";
+import { enrollInCourse, getCourse, getToken, getMyCourses } from "@/Lib";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, use } from "react";
 import Navbar from "@/components/Navbar";
@@ -32,25 +32,39 @@ export default function CoursePage({
   const { id } = use(params);
   const [course, setCourse] = useState<CourseState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [haveCourse, setHaveCourse] = useState(false);
 
   useEffect(() => {
     if (!token) {
       router.push("/login");
       return;
     }
-    const fetchCourse = async () => {
+    const fetchCourseAndEnrollments = async () => {
       setIsLoading(true);
       try {
-        const data = await getCourse(id, router);
-        setCourse(data?.course || data);
+        const [courseData, myCoursesData] = await Promise.all([
+          getCourse(id, router),
+          getMyCourses(router),
+        ]);
+
+        setCourse(courseData?.course || courseData);
+
+        if (myCoursesData && myCoursesData.enrollments) {
+          const isEnrolled = myCoursesData.enrollments.some((e: any) => {
+            const eCourseId = e.course?._id || e.course?.id || e.course;
+            return eCourseId === id;
+          });
+          setHaveCourse(isEnrolled);
+        }
       } catch (error) {
         console.error(error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchCourse();
+    fetchCourseAndEnrollments();
   }, [id, token, router]);
+  console.log(course);
 
   const handleGetTheCourse = async (courseId: string) => {
     const currentToken = getToken();
@@ -242,22 +256,44 @@ export default function CoursePage({
 
               <div className="space-y-3">
                 {course?.isFree ? (
-                  <button
-                    onClick={() => handleGetTheCourse(id)}
-                    className="cursor-pointer group flex items-center justify-center gap-2 rounded-lg w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
-                  >
-                    <span>Get The Course</span>
-                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
+                  haveCourse ? (
+                    <Link
+                      href={`/learning?courseId=${id}`}
+                      className="cursor-pointer group flex items-center justify-center gap-2 rounded-lg w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                    >
+                      <span>Countinue the course</span>
+                      <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => handleGetTheCourse(id)}
+                      className="cursor-pointer group flex items-center justify-center gap-2 rounded-lg w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                    >
+                      <span>Get The Course</span>
+                      <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  )
                 ) : (
-                  <>
-                    <button className="group flex items-center justify-center gap-2 w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95 rounded-lg">
-                      <span>Add to cart</span>
-                    </button>
-                    <button className="w-full py-4 border-2 border-white text-white font-extrabold hover:bg-white/5 transition-all duration-300 rounded-lg">
-                      Buy now
-                    </button>
-                  </>
+                  <div>
+                    {haveCourse ? (
+                      <Link
+                        href={`/learning?courseId=${id}`}
+                        className="cursor-pointer group flex items-center justify-center gap-2 rounded-lg w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                      >
+                        <span>Countinue the course</span>
+                        <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    ) : (
+                      <>
+                        <button className="group flex items-center justify-center gap-2 w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95 rounded-lg">
+                          <span>Add to cart</span>
+                        </button>
+                        <button className="w-full py-4 border-2 border-white text-white font-extrabold hover:bg-white/5 transition-all duration-300 rounded-lg">
+                          Buy now
+                        </button>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
 

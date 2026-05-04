@@ -7,20 +7,17 @@ export const addToken = (token: string) => {
     return localStorage.setItem("token", token);
   }
 };
-
 export const removeToken = () => {
   if (typeof window !== "undefined") {
     return localStorage.removeItem("token");
   }
 };
-
 export const getToken = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("token");
   }
   return null;
 };
-
 // Helper for handling unauthorized access or expired tokens
 const handleUnauthorized = (router?: any, message?: string) => {
   removeToken();
@@ -31,7 +28,6 @@ const handleUnauthorized = (router?: any, message?: string) => {
     duration: 2000,
   });
 };
-
 export const SubmitHandler = async (
   e: React.FormEvent,
   userData: any,
@@ -71,7 +67,6 @@ export const SubmitHandler = async (
     console.log(error);
   }
 };
-
 export const getAllCourses = async (router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/courses`, {
@@ -99,7 +94,6 @@ export const getAllCourses = async (router?: any) => {
     console.log(error);
   }
 };
-
 export const getCourse = async (id: string, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/course/${id}`, {
@@ -127,7 +121,6 @@ export const getCourse = async (id: string, router?: any) => {
     console.log(error);
   }
 };
-
 export const getCourseLessons = async (courseId: string, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/course/${courseId}/lessons`, {
@@ -171,6 +164,90 @@ export const enrollInCourse = async (courseId: string, router?: any) => {
       toast.success(data.message, {
         duration: 1000,
       });
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getMyCourses = async (router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/my-courses`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const makelessonCompleted = async (lessonId: string, router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/lesson/${lessonId}/complete`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+      });
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getProfile = async (router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
       return data;
     } else {
       if (res.status === 401 || data.message === "jwt expired") {

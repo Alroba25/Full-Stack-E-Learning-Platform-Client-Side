@@ -8,7 +8,7 @@ export interface LoginState {
   password: string;
 }
 export interface CourseState {
-  id: number;
+  id: string;
   title: string;
   description: string;
   instructor: {
@@ -28,4 +28,15 @@ export interface LessonState {
   duration: string;
   createdAt: Date;
   updatedAt: Date;
+}
+export interface UserState {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 }
