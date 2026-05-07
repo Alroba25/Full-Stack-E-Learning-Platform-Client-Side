@@ -262,3 +262,168 @@ export const getProfile = async (router?: any) => {
     console.log(error);
   }
 };
+export const getInstructorCourses = async (router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/instructor-courses`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getInstrucortCoursesUsers = async (router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/instructor-courses-users`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const createCourse = async (courseData: any, router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/course`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(courseData),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+        onAutoClose: () => {
+          if (router) {
+            router.push("/instructor-dashboard");
+          }
+        },
+      });
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const addLesson = async (
+  courseId: string,
+  lessonData: FormData,
+  router?: any,
+) => {
+  try {
+    const res = await fetch(`${BASE_URL}/course/${courseId}/lessons`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(lessonData),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+        onAutoClose: () => {
+          if (router) {
+            router.push("/instructor-dashboard");
+          }
+        },
+      });
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const deleteCourse = async (courseId: string, router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/instructor-course/${courseId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+        onAutoClose: () => {
+          if (router) {
+            router.push("/instructor-dashboard");
+          }
+        },
+      });
+      return data;
+    } else {
+      if (res.status === 401 || data.message === "jwt expired") {
+        handleUnauthorized(router, data.message);
+        return null;
+      }
+      toast.error(data.message, {
+        duration: 1000,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

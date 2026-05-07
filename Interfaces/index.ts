@@ -40,3 +40,10 @@ export interface UserState {
     updatedAt: Date;
   };
 }
+export interface IStudent {
+  progress: number;
+  user: { name: string; email: string; image: string; role: string };
+  course?: { title: string };
+  createdAt?: string | Date;
+}
+

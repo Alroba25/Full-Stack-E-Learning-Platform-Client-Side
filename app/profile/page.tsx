@@ -8,7 +8,6 @@ import {
   UserRound,
   BookOpen,
   CheckCircle,
-  Clock,
   Calendar,
   LogOut,
   ChevronRight,
@@ -142,7 +141,7 @@ export default function ProfilePage() {
               </h1>
               {profile?.user?.role === "instructor" && (
                 <Link
-                  href="/instructor-dashboard"
+                  href="/instructor/dashboard"
                   className="group flex items-center gap-2 bg-linear-to-r from-[#a435f0]/20 to-[#8710d8]/20 hover:from-[#a435f0]/40 hover:to-[#8710d8]/40 border border-[#a435f0]/30 px-5 py-2.5 rounded-xl text-white font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(164,53,240,0.3)] hover:-translate-y-0.5"
                 >
                   <LayoutDashboard
@@ -150,6 +149,22 @@ export default function ProfilePage() {
                     className="text-[#a435f0] group-hover:text-white transition-colors"
                   />
                   <span>Instructor Dashboard</span>
+                  <ChevronRight
+                    size={16}
+                    className="text-[#888] group-hover:text-white group-hover:translate-x-1 transition-all"
+                  />
+                </Link>
+              )}
+              {profile?.user?.role === "admin" && (
+                <Link
+                  href="/admin/dashboard"
+                  className="group flex items-center gap-2 bg-linear-to-r from-[#a435f0]/20 to-[#8710d8]/20 hover:from-[#a435f0]/40 hover:to-[#8710d8]/40 border border-[#a435f0]/30 px-5 py-2.5 rounded-xl text-white font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(164,53,240,0.3)] hover:-translate-y-0.5"
+                >
+                  <LayoutDashboard
+                    size={18}
+                    className="text-[#a435f0] group-hover:text-white transition-colors"
+                  />
+                  <span>Admin Dashboard</span>
                   <ChevronRight
                     size={16}
                     className="text-[#888] group-hover:text-white group-hover:translate-x-1 transition-all"

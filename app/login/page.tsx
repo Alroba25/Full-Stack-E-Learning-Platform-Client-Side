@@ -5,6 +5,7 @@ import Link from "next/link";
 import { loginInputs } from "@/Data";
 import { SubmitHandler } from "@/Lib";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface FormState {
   [key: string]: string;
@@ -55,8 +56,8 @@ export default function Login() {
       </Link>
 
       <div className="relative z-10 w-full max-w-[450px] p-12 rounded-[24px] bg-[#141414]/60 backdrop-blur-2xl border border-white/10 shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-500">
-        <div className="text-3xl font-extrabold text-center mb-2 bg-linear-to-r from-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-tighter">
-          E-Platform
+        <div className="flex items-center justify-center mb-2">
+          <Image src="/Logo.png" alt="Logo" width={100} height={100} />
         </div>
         <h1 className="text-center text-2xl font-bold mb-2 text-white">
           Welcome Back

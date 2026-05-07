@@ -5,7 +5,7 @@ import { CourseState } from "@/Interfaces";
 import { getAllCourses, getToken } from "@/Lib";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
+import Image from "next/image";
 export default function Courses() {
   const token = getToken();
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function Courses() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
+  console.log(courses);
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans relative overflow-x-hidden">
       {/* Background glow effects */}
@@ -131,20 +131,34 @@ export default function Courses() {
                     <span className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-[0.7rem] font-bold uppercase tracking-wider text-white border border-white/10 z-10">
                       Programming
                     </span>
-                    {/* <Image
-                      src={course.image}
+                    <Image
+                      src={course.imageUrl || "/Darsfiy-cover-course.png"}
                       alt={course.title}
                       fill
                       className="object-cover"
-                    /> */}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
                   </div>
                   <div className="p-5">
                     <h3 className="text-[1.1rem] font-bold mb-2 leading-tight h-12 line-clamp-2 overflow-hidden">
                       {course.title}
                     </h3>
-                    <p className="text-[0.85rem] text-[#888] mb-4">
-                      {course.instructor.name}
-                    </p>
+                    <div className="text-[#888] text-sm mb-6 flex items-center gap-2">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      {course.instructor?.name || "Instructor"}
+                    </div>
 
                     <div className="flex items-center gap-1.5 mb-4">
                       <span className="font-bold text-[#ffb800] text-[0.95rem]">
@@ -169,10 +183,7 @@ export default function Courses() {
                     <div className="flex justify-between items-center pt-4 border-t border-white/5">
                       <div className="flex items-baseline gap-2">
                         <span className="text-xl font-extrabold text-white">
-                          ${course.price}
-                        </span>
-                        <span className="text-sm text-[#666] line-through">
-                          $1000
+                          {course.price === 0 ? "Free" : "$" + course.price}
                         </span>
                       </div>
                       <Link

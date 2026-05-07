@@ -6,6 +6,7 @@ import { registerInputs } from "@/Data";
 import { SubmitHandler } from "@/Lib";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface FormState {
   [key: string]: string;
@@ -38,7 +39,7 @@ export default function Register() {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white font-sans relative overflow-hidden p-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white font-sans relative overflow-hidden">
       {/* Background glow effects */}
       <div className="absolute top-[20%] left-[10%] w-[50vw] h-[50vw] rounded-full z-0 pointer-events-none bg-[radial-gradient(circle,rgba(138,43,226,0.15)_0%,rgba(0,0,0,0)_70%)]"></div>
       <div className="absolute bottom-[20%] right-[10%] w-[60vw] h-[60vw] rounded-full z-0 pointer-events-none bg-[radial-gradient(circle,rgba(0,255,255,0.1)_0%,rgba(0,0,0,0)_70%)]"></div>
@@ -63,10 +64,12 @@ export default function Register() {
       </Link>
 
       <div className="relative z-10 w-full max-w-[450px] p-12 rounded-[24px] bg-[#141414]/60 backdrop-blur-2xl border border-white/10 shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-500">
-        <div className="text-3xl font-extrabold text-center mb-2 bg-linear-to-r from-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-tighter">
-          E-Platform
+        <div className="flex items-center justify-center mb-2">
+          <Image src="/Logo.png" alt="Logo" width={100} height={100} />
         </div>
-        <h1 className="text-center text-2xl font-bold mb-2 text-white">Create Account</h1>
+        <h1 className="text-center text-2xl font-bold mb-2 text-white">
+          Create Account
+        </h1>
         <p className="text-center text-[0.95rem] text-[#a0a0a0] mb-10">
           Join thousands of learners worldwide
         </p>
@@ -74,7 +77,10 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {registerInputs.map((input) => (
             <div key={input.id}>
-              <label htmlFor={input.id} className="block text-sm font-semibold mb-2 text-[#d0d0d0]">
+              <label
+                htmlFor={input.id}
+                className="block text-sm font-semibold mb-2 text-[#d0d0d0]"
+              >
                 {input.label}
               </label>
               <input
@@ -113,7 +119,10 @@ export default function Register() {
 
         <div className="text-center mt-8 text-sm text-[#a0a0a0]">
           Already have an account?{" "}
-          <Link href="/login" className="text-[#00f2fe] font-semibold hover:underline">
+          <Link
+            href="/login"
+            className="text-[#00f2fe] font-semibold hover:underline"
+          >
             Log in
           </Link>
         </div>

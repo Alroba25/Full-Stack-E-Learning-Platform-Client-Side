@@ -42,7 +42,7 @@ export default function LessonsSeaction({ id }: { id: string }) {
                   size={18}
                   className="text-white/40 group-hover:rotate-90 transition-transform"
                 />
-                <span className="font-bold">{section.title}</span>
+                <span className="font-bold">{section?.title}</span>
               </div>
             </div>
           ))}

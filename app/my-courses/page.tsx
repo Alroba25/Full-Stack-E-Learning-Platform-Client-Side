@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { CourseState } from "@/Interfaces";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function MyCourses() {
   const token = getToken();
@@ -21,7 +22,11 @@ export default function MyCourses() {
     const fetchMyCourses = async () => {
       try {
         const data = await getMyCourses(router);
-        setCourses(data?.enrollments || []);
+        // Filter out enrollments where the course object is null
+        const validEnrollments = (data?.enrollments || []).filter(
+          (item: any) => item.course !== null,
+        );
+        setCourses(validEnrollments);
       } finally {
         setIsLoading(false);
       }
@@ -60,23 +65,27 @@ export default function MyCourses() {
                   <span className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-[0.7rem] font-bold uppercase tracking-wider text-white border border-white/10 z-10">
                     Enrolled
                   </span>
-                  <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                    <span className="text-2xl">🎓</span>
-                  </div>
+                  <Image
+                    src={course.course?.imageUrl || "/Darsfiy-cover-course.png"}
+                    alt={course.course?.title || "Course Cover"}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
                 </div>
 
                 <div className="p-6 flex flex-col grow">
                   <h3 className="text-[1.15rem] font-bold mb-2 leading-tight line-clamp-2">
-                    {course.course.title}
+                    {course.course?.title || "Untitled Course"}
                   </h3>
                   <p className="text-[0.85rem] text-[#888] mb-4 grow line-clamp-2">
-                    {course.course.description}
+                    {course.course?.description || "No description available."}
                   </p>
 
                   <div className="flex items-center gap-2 mb-6">
                     <div className="w-6 h-6 rounded-full bg-linear-to-r from-purple-500 to-blue-500"></div>
                     <span className="text-[0.85rem] text-[#aaa]">
-                      {course.course.instructor?.name || "Instructor"}
+                      {course.course?.instructor?.name || "Instructor"}
                     </span>
                   </div>
 
