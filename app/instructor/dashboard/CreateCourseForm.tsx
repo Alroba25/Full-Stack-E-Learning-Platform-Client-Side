@@ -23,6 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, ListOrdered, Plus, Trash2, Video } from "lucide-react";
 
 // ─── React & Form ────────────────────────────────────────────────────────────
+import { useEffect } from "react";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { courseSchema, CourseFormValues } from "@/Schema";
@@ -37,6 +38,8 @@ const DEFAULT_VALUES: CourseFormValues = {
   isFree: false,
   price: 0,
   imageUrl: "",
+  category: "Programming",
+  level: "Beginner",
   lessons: [DEFAULT_LESSON],
 };
 
@@ -59,6 +62,7 @@ export default function CreateCourseForm({
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema) as any,
@@ -74,12 +78,22 @@ export default function CreateCourseForm({
   const watchedTitle = watch("title");
   const watchedDescription = watch("description");
   const watchedImage = watch("imageUrl");
+  const watchedCategory = watch("category");
+  const watchedLevel = watch("level");
   const isFree = watch("isFree");
+
+  useEffect(() => {
+    if (isFree) {
+      setValue("price", 0);
+    }
+  }, [isFree, setValue]);
 
   const showLessons =
     watchedTitle?.length >= 3 &&
     watchedDescription?.length >= 10 &&
-    watchedImage?.length > 5;
+    watchedImage?.length > 5 &&
+    !!watchedCategory &&
+    !!watchedLevel;
 
   const addLesson = () =>
     append({ ...DEFAULT_LESSON, order: fields.length + 1 });
@@ -89,7 +103,6 @@ export default function CreateCourseForm({
     try {
       const res = await createCourse(data);
       if (res) {
-        // Lib already handles the success toast, we just need to update UI
         reset(DEFAULT_VALUES);
         onSuccess(res.courses ?? []);
       }
@@ -114,7 +127,10 @@ export default function CreateCourseForm({
       <ScrollArea className="flex-1 min-h-0">
         <form
           id="course-form"
-          onSubmit={handleSubmit(onSubmit as any)}
+          onSubmit={handleSubmit(onSubmit as any, (err) => {
+            console.error("Form Validation Errors:", err);
+            toast.error("Please check the form for errors");
+          })}
           className="px-6 py-5 space-y-8"
         >
           {/* ── Course Information ─────────────────────────────── */}
@@ -177,6 +193,54 @@ export default function CreateCourseForm({
                   )}
                 </div>
               )}
+
+              {/* Category */}
+              <div className="space-y-2">
+                <Label htmlFor="course-category">Category</Label>
+                <select
+                  id="course-category"
+                  {...register("category")}
+                  className={`flex h-10 w-full rounded-md border bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer ${
+                    errors.category ? "border-destructive" : "border-input"
+                  }`}
+                >
+                  {["Programming", "Data Science", "Design", "Business", "Marketing"].map(
+                    (cat) => (
+                      <option key={cat} value={cat} className="bg-zinc-950 text-white">
+                        {cat}
+                      </option>
+                    )
+                  )}
+                </select>
+                {errors.category && (
+                  <p className="text-xs text-destructive">
+                    {errors.category.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Level */}
+              <div className="space-y-2">
+                <Label htmlFor="course-level">Level</Label>
+                <select
+                  id="course-level"
+                  {...register("level")}
+                  className={`flex h-10 w-full rounded-md border bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer ${
+                    errors.level ? "border-destructive" : "border-input"
+                  }`}
+                >
+                  {["Beginner", "Intermediate", "Advanced"].map((lvl) => (
+                    <option key={lvl} value={lvl} className="bg-zinc-950 text-white">
+                      {lvl}
+                    </option>
+                  ))}
+                </select>
+                {errors.level && (
+                  <p className="text-xs text-destructive">
+                    {errors.level.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Image URL */}
@@ -368,10 +432,17 @@ export default function CreateCourseForm({
                 </div>
                 <p className="font-medium text-sm">Lessons will appear here</p>
                 <p className="text-xs max-w-[260px] opacity-70">
-                  Complete the Course Title, Description, and Image URL above to
-                  unlock lesson creation.
+                  Complete the Course Title, Description, Image URL, Category,
+                  and Level above to unlock lesson creation.
                 </p>
               </div>
+            </div>
+          )}
+          {/* General Error Message */}
+          {Object.keys(errors).length > 0 && (
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm font-medium animate-in fade-in slide-in-from-top-1">
+              There are {Object.keys(errors).length} section(s) with errors.
+              Please check your course information and lessons.
             </div>
           )}
         </form>

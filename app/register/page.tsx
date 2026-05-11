@@ -37,7 +37,7 @@ export default function Register() {
     },
     [formData, isInstructor, router],
   );
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white font-sans relative overflow-hidden">
       {/* Background glow effects */}

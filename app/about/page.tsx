@@ -1,6 +1,13 @@
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { Users, BookOpen, Globe, Award, Target, Zap } from "lucide-react";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn more about Darsify's mission to empower the world through premium quality education and industry-leading courses.",
+};
 
 export default function AboutPage() {
   return (
@@ -159,9 +166,7 @@ export default function AboutPage() {
       </main>
 
       {/* Footer */}
-      <footer className="p-16 text-center border-t border-white/5 text-[#666] bg-black/50">
-        <p>&copy; 2026 E-Platform Learning. Premium Educational Experience.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

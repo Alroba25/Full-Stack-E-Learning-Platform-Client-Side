@@ -18,6 +18,9 @@ export interface CourseState {
   isFree: boolean;
   createdAt: Date;
   updatedAt: Date;
+  rating?: number;
+  category?: string;
+  level?: string;
 }
 export interface LessonState {
   id: number;
@@ -46,4 +49,8 @@ export interface IStudent {
   course?: { title: string };
   createdAt?: string | Date;
 }
-
+export interface IFilter {
+  category: string[];
+  rating: number | null;
+  level: string[];
+}

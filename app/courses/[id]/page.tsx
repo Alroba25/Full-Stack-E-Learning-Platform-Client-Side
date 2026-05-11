@@ -80,6 +80,7 @@ export default function CoursePage({
     }
     const data = await enrollInCourse(courseId, router);
     if (data) {
+      setHaveCourse(true);
       // Refresh course data or update state
       const updatedData = await getCourse(courseId, router);
       setCourse(updatedData?.course || updatedData);
@@ -89,7 +90,7 @@ export default function CoursePage({
   if (isLoading) {
     return <LoadingSkeleton />;
   }
-
+  console.log("course", course);
   return (
     <>
       <div className="min-h-screen bg-black text-white font-sans selection:bg-[#4facfe]/30">
@@ -148,7 +149,20 @@ export default function CoursePage({
                   {course?.instructor?.name || "Premium Instructor"}
                 </Link>
               </div>
-
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-white/60">Category:</span>
+                  <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-white font-medium">
+                    {course?.category || "Programming"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white/60">Level:</span>
+                  <span className="px-2.5 py-1 rounded-md bg-blue-600/20 border border-blue-500/20 text-blue-400 font-medium">
+                    {course?.level || "Beginner"}
+                  </span>
+                </div>
+              </div>
               <div className="flex flex-wrap items-center gap-6 text-sm">
                 <div className="flex items-center gap-1.5 text-white opacity-90">
                   <Calendar size={16} />

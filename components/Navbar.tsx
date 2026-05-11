@@ -13,12 +13,7 @@ export default function Navbar() {
     setToken(getToken());
   }, [token]);
 
-  const navLinks = [
-    { name: "Courses", href: "/courses" },
-    { name: "Features", href: "#features" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "About", href: "/about" },
-  ];
+  const navLinks = [{ name: "Courses", href: "/courses" }];
 
   return (
     <nav className="sticky top-0 z-100 flex items-center justify-between px-8 py-6 md:px-16 bg-[#050505]/70 backdrop-blur-xl border-b border-white/5">
@@ -26,7 +21,11 @@ export default function Navbar() {
         href="/"
         className="text-2xl font-heading font-extrabold bg-linear-to-r from-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-tighter hover:opacity-80 transition-opacity"
       >
-        <img src="/logo.png" alt="Logo" className="h-18 w-auto object-contain" />
+        <img
+          src="/logo.png"
+          alt="Logo"
+          className="h-18 w-auto object-contain"
+        />
       </Link>
 
       <div className="hidden md:flex gap-10">

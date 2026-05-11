@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import HomeCoursesSeaction from "@/components/HomeCoursesSeaction";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -176,10 +177,8 @@ export default function Home() {
         <HomeCoursesSeaction />
       </section>
 
-      {/* Basic Footer */}
-      <footer className="p-16 text-center border-t border-white/5 text-[#888] mt-16">
-        <p>&copy; 2026 E-Platform Learning. All rights reserved.</p>
-      </footer>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

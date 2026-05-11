@@ -15,7 +15,7 @@ export default function HomeCoursesSeaction() {
   }, []);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-      {courses.map((course: any) => (
+      {courses.slice(0, 3).map((course: any) => (
         <div
           key={course._id}
           className="bg-white/2 border border-white/5 rounded-[20px] overflow-hidden hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_20px_rgba(138,43,226,0.1)] hover:border-white/15 backdrop-blur-md group transition-all"

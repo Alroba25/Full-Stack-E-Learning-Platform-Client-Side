@@ -55,7 +55,10 @@ export const SubmitHandler = async (
       });
       addToken(data.token);
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
       } else {
         toast.error(data.message, {
@@ -67,9 +70,21 @@ export const SubmitHandler = async (
     console.log(error);
   }
 };
-export const getAllCourses = async (router?: any) => {
+export const getAllCourses = async (router?: any, filters?: any) => {
   try {
-    const res = await fetch(`${BASE_URL}/courses`, {
+    const query = new URLSearchParams();
+    if (filters?.category?.length) {
+      query.append("category", filters.category.join(","));
+    }
+    if (filters?.level?.length) {
+      query.append("level", filters.level.join(","));
+    }
+
+    if (filters?.rating) {
+      query.append("rating", filters.rating.toString());
+    }
+
+    const res = await fetch(`${BASE_URL}/courses?${query.toString()}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +97,10 @@ export const getAllCourses = async (router?: any) => {
     if (res.ok) {
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -109,7 +127,10 @@ export const getCourse = async (id: string, router?: any) => {
     if (res.ok) {
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -136,7 +157,10 @@ export const getCourseLessons = async (courseId: string, router?: any) => {
     if (res.ok) {
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -166,7 +190,10 @@ export const enrollInCourse = async (courseId: string, router?: any) => {
       });
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -193,7 +220,10 @@ export const getMyCourses = async (router?: any) => {
     if (res.ok) {
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -223,7 +253,10 @@ export const makelessonCompleted = async (lessonId: string, router?: any) => {
       });
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -250,7 +283,10 @@ export const getProfile = async (router?: any) => {
     if (res.ok) {
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -277,7 +313,10 @@ export const getInstructorCourses = async (router?: any) => {
     if (res.ok) {
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -304,7 +343,10 @@ export const getInstrucortCoursesUsers = async (router?: any) => {
     if (res.ok) {
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -340,7 +382,10 @@ export const createCourse = async (courseData: any, router?: any) => {
       });
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -380,7 +425,10 @@ export const addLesson = async (
       });
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -415,7 +463,10 @@ export const deleteCourse = async (courseId: string, router?: any) => {
       });
       return data;
     } else {
-      if (res.status === 401 || data.message === "jwt expired") {
+      if (
+        res.status === 401 ||
+        data.message === "Login timeout, please login again."
+      ) {
         handleUnauthorized(router, data.message);
         return null;
       }
@@ -426,4 +477,16 @@ export const deleteCourse = async (courseId: string, router?: any) => {
   } catch (error) {
     console.log(error);
   }
+};
+export const askAI = async (message: string) => {
+  const res = await fetch(`${BASE_URL}/ai/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ message }),
+  });
+
+  return await res.json();
 };

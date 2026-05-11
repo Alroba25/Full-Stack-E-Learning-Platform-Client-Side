@@ -83,36 +83,47 @@ function LearningContent() {
         setLessons(fetchedLessons);
 
         const initialCompleted = new Set<string>();
-        
+
         // Check if individual lessons have a completed flag from backend
         fetchedLessons.forEach((lesson: any) => {
-          if (lesson.isCompleted === true || lesson.completed === true || lesson.status === "completed") {
+          if (
+            lesson.isCompleted === true ||
+            lesson.completed === true ||
+            lesson.status === "completed"
+          ) {
             initialCompleted.add(lesson._id || lesson.id);
           }
         });
 
         // Check enrollment data for completedLessons array
         if (myCoursesData && myCoursesData.enrollments) {
-           const enrollment = myCoursesData.enrollments.find((e: any) => {
-              const eCourseId = e.course?._id || e.course?.id || e.course;
-              return eCourseId === courseId;
-           });
-           
-           if (enrollment?.completedLessons && Array.isArray(enrollment.completedLessons)) {
-              enrollment.completedLessons.forEach((item: any) => {
-                 const id = typeof item === 'object' && item !== null ? (item._id || item.id) : item;
-                 initialCompleted.add(id.toString());
-              });
-           }
+          const enrollment = myCoursesData.enrollments.find((e: any) => {
+            const eCourseId = e.course?._id || e.course?.id || e.course;
+            return eCourseId === courseId;
+          });
+
+          if (
+            enrollment?.completedLessons &&
+            Array.isArray(enrollment.completedLessons)
+          ) {
+            enrollment.completedLessons.forEach((item: any) => {
+              const id =
+                typeof item === "object" && item !== null
+                  ? item._id || item.id
+                  : item;
+              initialCompleted.add(id.toString());
+            });
+          }
         }
-        
+
         setCompletedLessons(initialCompleted);
 
         if (fetchedLessons.length > 0) {
           // Default to first lesson, or find first uncompleted lesson
-          const firstUncompleted = fetchedLessons.find(
-             (l: any) => !initialCompleted.has(l._id || l.id)
-          ) || fetchedLessons[0];
+          const firstUncompleted =
+            fetchedLessons.find(
+              (l: any) => !initialCompleted.has(l._id || l.id),
+            ) || fetchedLessons[0];
           setActiveLesson(firstUncompleted);
         }
       } catch (error) {
@@ -141,7 +152,7 @@ function LearningContent() {
             href="/my-courses"
             className="hover:text-[#4facfe] transition-colors flex items-center gap-2 text-sm font-semibold"
           >
-            <ChevronLeft size={16} /> Back to Courses
+            <ChevronLeft size={16} /> Back to My Courses
           </Link>
           <div className="w-px h-6 bg-white/20 hidden md:block"></div>
           <h1 className="font-bold text-lg hidden md:block truncate max-w-lg">
@@ -346,9 +357,7 @@ function LearningContent() {
 
 export default function LearningPage() {
   return (
-    <Suspense
-      fallback={<LoadingSkeleton />}
-    >
+    <Suspense fallback={<LoadingSkeleton />}>
       <LearningContent />
     </Suspense>
   );

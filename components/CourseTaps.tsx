@@ -53,6 +53,18 @@ export const CourseTaps = ({
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
+                  <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
+                    {course.category && (
+                      <span className="backdrop-blur-md bg-black/40 text-[10px] font-bold uppercase tracking-wider text-white px-2 py-1 rounded-md border border-white/10">
+                        {course.category}
+                      </span>
+                    )}
+                    {course.level && (
+                      <span className="backdrop-blur-md bg-blue-500/40 text-[10px] font-bold uppercase tracking-wider text-white px-2 py-1 rounded-md border border-blue-400/20">
+                        {course.level}
+                      </span>
+                    )}
+                  </div>
                   <div className="absolute bottom-4 left-4 flex items-center gap-1 text-sm font-medium text-white backdrop-blur-md bg-black/30 px-2.5 py-1 rounded-lg">
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     {course.rating || "New"}

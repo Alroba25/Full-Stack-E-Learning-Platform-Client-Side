@@ -7,6 +7,8 @@ import { CourseState } from "@/Interfaces";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import Link from "next/link";
 import Image from "next/image";
+import Footer from "@/components/Footer";
+import { User } from "lucide-react";
 
 export default function MyCourses() {
   const token = getToken();
@@ -38,6 +40,7 @@ export default function MyCourses() {
   if (isLoading) {
     return <LoadingSkeleton />;
   }
+  console.log(courses);
   return (
     <div className="min-h-screen flex flex-col bg-[#050505] text-white font-sans relative overflow-x-hidden">
       {/* Background glow effects */}
@@ -83,7 +86,9 @@ export default function MyCourses() {
                   </p>
 
                   <div className="flex items-center gap-2 mb-6">
-                    <div className="w-6 h-6 rounded-full bg-linear-to-r from-purple-500 to-blue-500"></div>
+                    <div className="size-6 rounded-full bg-white/10 flex items-center justify-center border border-white/10 overflow-hidden">
+                      <User className="size-3 text-[#aaa]" />
+                    </div>
                     <span className="text-[0.85rem] text-[#aaa]">
                       {course.course?.instructor?.name || "Instructor"}
                     </span>
@@ -131,9 +136,7 @@ export default function MyCourses() {
         )}
       </main>
 
-      <footer className="p-16 text-center border-t border-white/5 text-[#666] mt-auto">
-        <p>&copy; 2026 E-Platform Learning. Premium Educational Experience.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
