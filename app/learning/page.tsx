@@ -139,8 +139,6 @@ function LearningContent() {
   if (isLoading) {
     return <LoadingSkeleton />;
   }
-  console.log("course", course);
-  console.log("lessons", activeLesson);
   return (
     <div className="min-h-screen bg-[#050505] flex flex-col text-white font-sans selection:bg-[#4facfe]/30">
       <Navbar />
@@ -278,7 +276,7 @@ function LearningContent() {
                 const isCompleted = completedLessons.has(
                   lesson._id || lesson.id,
                 );
-
+                console.log(lesson);
                 return (
                   <div
                     key={index}

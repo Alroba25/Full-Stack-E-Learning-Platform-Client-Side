@@ -1,7 +1,5 @@
 import { toast } from "sonner";
-
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
 export const addToken = (token: string) => {
   if (typeof window !== "undefined") {
     return localStorage.setItem("token", token);
@@ -489,4 +487,288 @@ export const askAI = async (message: string) => {
   });
 
   return await res.json();
+};
+export const createPayment = async (paymentData: any, router?: any) => {
+  try {
+    const res = await fetch(`${BASE_URL}/payment`, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+
+        Authorization: `Bearer ${getToken()}`,
+      },
+
+      body: JSON.stringify(paymentData),
+    });
+
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getChatHistory = async () => {
+  const res = await fetch(`${BASE_URL}/ai/history`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+  return await res.json();
+};
+export const clearChatHistory = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/ai/history`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+      });
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const getAdminAllPayments = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/admin/payments`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const adminApprovePayment = async (paymentId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/admin/payments/${paymentId}/approve`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+      });
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const adminRejectPayment = async (paymentId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/admin/payments/${paymentId}/reject`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+      });
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const getCoursesByAdmin = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/admin/courses`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const deleteCourseByAdmin = async (courseId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/admin/courses/${courseId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+      });
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const getAllUsersByAdmin = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/admin/users`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const toggleUserAdmin = async (userId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/admin/users/${userId}/toggle-admin`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+      });
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const deleteUserByAdmin = async (userId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/admin/users/${userId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast.success(data.message, {
+        duration: 1000,
+      });
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
 };

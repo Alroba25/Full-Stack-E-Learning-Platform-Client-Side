@@ -21,6 +21,8 @@ export interface CourseState {
   rating?: number;
   category?: string;
   level?: string;
+  articals: string[];
+  resources: string[];
 }
 export interface LessonState {
   id: number;

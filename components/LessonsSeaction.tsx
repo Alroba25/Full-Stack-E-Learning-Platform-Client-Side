@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, LockKeyhole } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCourseLessons, getToken } from "@/Lib";
@@ -35,14 +35,14 @@ export default function LessonsSeaction({ id }: { id: string }) {
           lessons.map((section: { title: string }, index: number) => (
             <div
               key={index}
-              className="border-b border-white/5 last:border-0 p-4 bg-black hover:bg-white/3 transition-colors flex justify-between items-center group cursor-pointer"
+              className="border-b border-white/5 last:border-0 p-4 bg-black/40 flex justify-between items-center select-none cursor-not-allowed opacity-50 transition-all duration-300"
             >
               <div className="flex items-center gap-4">
-                <ChevronRight
-                  size={18}
-                  className="text-white/40 group-hover:rotate-90 transition-transform"
-                />
-                <span className="font-bold">{section?.title}</span>
+                <ChevronRight size={18} className="text-white/20" />
+                <span className="font-semibold text-white/60 text-sm tracking-wide">{section?.title}</span>
+              </div>
+              <div className="flex items-center justify-center size-8 rounded-lg bg-white/5 border border-white/5 text-white/60">
+                <LockKeyhole size={20} />
               </div>
             </div>
           ))}

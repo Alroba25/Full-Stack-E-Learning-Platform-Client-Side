@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import { FiltersSide } from "@/components/FiltersSide";
-
+import { getTimeAgo } from "@/Lib/utils";
 export default function Courses() {
   const token = getToken();
   const router = useRouter();
@@ -46,7 +46,7 @@ export default function Courses() {
     }
   }, [token, router, filter]);
 
-  const handleCategoryChange = (category: string) => {
+  const handleCategoryChange = useCallback((category: string) => {
     setFilter((prev) => {
       const exists = prev.category.includes(category);
       return {
@@ -56,16 +56,16 @@ export default function Courses() {
           : [...prev.category, category],
       };
     });
-  };
+  }, []);
 
-  const handleRatingChange = (rating: number | null) => {
+  const handleRatingChange = useCallback((rating: number | null) => {
     setFilter((prev) => ({
       ...prev,
       rating: prev.rating === rating ? null : rating,
     }));
-  };
+  }, []);
 
-  const handleLevelChange = (level: string) => {
+  const handleLevelChange = useCallback((level: string) => {
     setFilter((prev) => {
       const exists = prev.level.includes(level);
       return {
@@ -75,26 +75,25 @@ export default function Courses() {
           : [...prev.level, level],
       };
     });
-  };
+  }, []);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setFilter({
       category: [],
       rating: null,
       level: [],
     });
-  };
+  }, []);
 
-  const toggleWishlist = (id: string) => {
+  const toggleWishlist = useCallback((id: string) => {
     setWishlist((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, [filter]);
-  console.log(courses);
+  }, [fetchData]);
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans relative overflow-x-hidden">
       {/* Dynamic Background Elements */}
@@ -172,19 +171,19 @@ export default function Courses() {
                   {/* Card Image Wrapper */}
                   <div className="relative h-[220px] w-full overflow-hidden">
                     <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-20">
-                      {course.category && (
-                        <span className="backdrop-blur-md bg-black/40 text-[0.65rem] font-black uppercase tracking-[0.1em] text-white/90 px-3 py-1.5 rounded-lg border border-white/10 shadow-xl group-hover:border-white/20 transition-all duration-500">
+                      {course.category?.length > 0 && (
+                        <span className="backdrop-blur-md bg-black/40 text-[0.65rem] font-black uppercase tracking-widest text-white/90 px-3 py-1.5 rounded-lg border border-white/10 shadow-xl group-hover:border-white/20 transition-all duration-500">
                           {course.category}
                         </span>
                       )}
-                      {course.level && (
-                        <span className="backdrop-blur-md bg-blue-600/30 text-[0.65rem] font-black uppercase tracking-[0.1em] text-blue-100 px-3 py-1.5 rounded-lg border border-blue-500/20 shadow-[0_0_15px_rgba(37,99,235,0.2)] group-hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] group-hover:border-blue-400/30 transition-all duration-500">
+                      {course.level?.length > 0 && (
+                        <span className="backdrop-blur-md bg-blue-600/30 text-[0.65rem] font-black uppercase tracking-widest text-blue-100 px-3 py-1.5 rounded-lg border border-blue-500/20 shadow-[0_0_15px_rgba(37,99,235,0.2)] group-hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] group-hover:border-blue-400/30 transition-all duration-500">
                           {course.level}
                         </span>
                       )}
                     </div>
 
-                    <button
+                    {/* <button
                       onClick={(e) => {
                         e.preventDefault();
                         toggleWishlist(course._id);
@@ -194,12 +193,13 @@ export default function Courses() {
                       <Heart
                         className={`size-4 ${wishlist.includes(course._id) ? "fill-red-500 text-red-500 border-none" : ""}`}
                       />
-                    </button>
+                    </button> */}
 
                     <Image
                       src={course.imageUrl || "/Darsfiy-cover-course.png"}
                       alt={course.title}
                       fill
+                      priority={index < 4}
                       className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
@@ -221,20 +221,24 @@ export default function Courses() {
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
-                      <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                    <div className="flex flex-wrap items-center gap-3 mb-6 pb-6 border-b border-white/5">
+                      <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5 whitespace-nowrap">
                         <Star className="size-3.5 text-yellow-500 fill-yellow-500" />
                         <span className="font-black text-white text-sm">
                           {course.rating || "5.0"}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[#666] text-xs font-semibold uppercase tracking-wider">
-                        <BookOpen className="size-3.5" />
-                        12 Lessons
+                      <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5 whitespace-nowrap">
+                        <BookOpen className="size-3.5 text-blue-400" />
+                        <span className="font-bold text-white text-xs tracking-wider">
+                          {course.lessonsCount || 0} Lessons
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[#666] text-xs font-semibold uppercase tracking-wider">
-                        <Clock className="size-3.5" />
-                        24h
+                      <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5 whitespace-nowrap">
+                        <Clock className="size-3.5 text-green-400" />
+                        <span className="font-bold text-white text-xs tracking-wider">
+                          Last Updated {getTimeAgo(course.createdAt)}
+                        </span>
                       </div>
                     </div>
 

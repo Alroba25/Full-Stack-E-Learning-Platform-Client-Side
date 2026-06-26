@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import Footer from "@/components/Footer";
+import { getTimeAgo } from "@/Lib/utils";
 export default function CoursePage({
   params,
 }: {
@@ -86,11 +88,10 @@ export default function CoursePage({
       setCourse(updatedData?.course || updatedData);
     }
   };
-
   if (isLoading) {
     return <LoadingSkeleton />;
   }
-  console.log("course", course);
+  console.log(course);
   return (
     <>
       <div className="min-h-screen bg-black text-white font-sans selection:bg-[#4facfe]/30">
@@ -223,15 +224,7 @@ export default function CoursePage({
                   {course?.title}. We have carefully structured the curriculum
                   to take you from a complete beginner to a professional level.
                 </p>
-                <p>
-                  Whether you are looking to advance your current career or
-                  start a new path in tech, this course provides the practical
-                  skills and theoretical knowledge you need to succeed in the
-                  modern market.
-                </p>
-                <button className="text-[#c0c4fc] font-bold hover:text-white transition-colors mt-4 underline decoration-2 underline-offset-4">
-                  Show more
-                </button>
+                <p>{course?.description}</p>
               </div>
             </div>
           </div>
@@ -330,15 +323,19 @@ export default function CoursePage({
                   <ul className="space-y-3 text-sm text-[#d1d7dc]">
                     <li className="flex items-center gap-3">
                       <PlayCircle size={16} />
-                      <span>24 hours on-demand video</span>
+                      <span>
+                        {getTimeAgo(course?.updatedAt || "")} on-demand video
+                      </span>
                     </li>
                     <li className="flex items-center gap-3">
                       <FileText size={16} />
-                      <span>12 articles</span>
+                      <span>{course?.articals?.length || 0} articles</span>
                     </li>
                     <li className="flex items-center gap-3">
                       <Download size={16} />
-                      <span>45 downloadable resources</span>
+                      <span>
+                        {course?.resources?.length || 0} downloadable resources
+                      </span>
                     </li>
                     <li className="flex items-center gap-3">
                       <Smartphone size={16} />
@@ -387,11 +384,7 @@ export default function CoursePage({
           </div>
         </div>
         {/* Footer (matches global style) */}
-        <footer className="p-16 text-center border-t border-white/5 text-[#666] mt-16 bg-black">
-          <p>
-            &copy; 2026 E-Platform Learning. Premium Educational Experience.
-          </p>
-        </footer>
+        <Footer />
       </div>
     </>
   );

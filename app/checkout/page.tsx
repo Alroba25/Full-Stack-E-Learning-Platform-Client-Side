@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getCourse } from "@/Lib";
+import { createPayment, getCourse } from "@/Lib";
 import Navbar from "@/components/Navbar";
 import {
   ShieldCheck,
@@ -13,6 +13,8 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { paymentMethods } from "@/Data";
+import { toast } from "sonner";
+import Footer from "@/components/Footer";
 export default function Checkout() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -39,6 +41,7 @@ export default function Checkout() {
     };
     fetchCourse();
   }, [courseId, router]);
+  console.log(course);
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -46,15 +49,38 @@ export default function Checkout() {
       </div>
     );
   }
-  const handelSubmit = () => {
-    console.log(
-      "Selected Method : ",
-      selectedMethod,
-      "Payment Proof : ",
-      paymentProof,
-      "Phone Number : ",
-      phoneNumber,
+  const handelSubmit = async () => {
+    if (!paymentProof || !phoneNumber) {
+      toast.error("Please fill all the fields", {
+        duration: 1000,
+      });
+      return;
+    }
+    const payment = await createPayment(
+      {
+        paymentMethod: selectedMethod,
+        paymentProof,
+        phoneNumber,
+        courseId: course.course._id,
+      },
+      router,
     );
+    if (payment?.success) {
+      toast.info(payment.message, {
+        duration: 1000,
+      });
+      router.push("/my-courses");
+    } else {
+      toast.error(payment.message, {
+        duration: 1000,
+      });
+    }
+    console.log({
+      paymentMethod: selectedMethod,
+      paymentProof,
+      phoneNumber,
+      courseId: course.course._id,
+    });
   };
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#a435f0]/30">
@@ -160,7 +186,7 @@ export default function Checkout() {
                 </h3>
                 <p className="text-[#888] text-sm leading-relaxed">
                   Number To Send Money :{" "}
-                  <span className="text-[#a435f0]">01070072878</span>
+                  <span className="text-[#a435f0]">+201070072878</span>
                 </p>
                 <p className="text-[#888] text-sm leading-relaxed">
                   Please enter your wallet number below. You will receive a
@@ -331,12 +357,7 @@ export default function Checkout() {
           </aside>
         </div>
       </main>
-
-      <footer className="py-12 border-t border-white/5 text-center mt-12">
-        <p className="text-[#888] text-sm">
-          &copy; 2026 E-Platform Learning. Secure Payment Powered by PayMob.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

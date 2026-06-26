@@ -157,7 +157,7 @@ export default function ProfilePage() {
               )}
               {profile?.user?.role === "admin" && (
                 <Link
-                  href="/admin/dashboard"
+                  href="/admin-dashboard"
                   className="group flex items-center gap-2 bg-linear-to-r from-[#a435f0]/20 to-[#8710d8]/20 hover:from-[#a435f0]/40 hover:to-[#8710d8]/40 border border-[#a435f0]/30 px-5 py-2.5 rounded-xl text-white font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(164,53,240,0.3)] hover:-translate-y-0.5"
                 >
                   <LayoutDashboard
@@ -206,6 +206,29 @@ export default function ProfilePage() {
               <h3 className="text-[#d1d7dc] font-bold text-lg group-hover:text-white transition-colors">
                 Completed Lessons
               </h3>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md hover:bg-white/10 transition-colors duration-300 group">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-[#4facfe]/20 to-[#00f2fe]/20 flex items-center justify-center border border-[#4facfe]/30">
+                  <BookOpen className="text-[#4facfe]" size={24} />
+                </div>
+                <span className="text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-white to-white/50">
+                  {0}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-[#d1d7dc] font-bold text-lg group-hover:text-white transition-colors">
+                  Orders
+                </h3>
+                <Link
+                  href="/orders"
+                  className="text-[#4facfe] hover:text-[#00f2fe] font-bold text-sm flex items-center gap-1 transition-colors"
+                >
+                  View All <ChevronRight size={16} />
+                </Link>
+              </div>
             </div>
           </div>
 

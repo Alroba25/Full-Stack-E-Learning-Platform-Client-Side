@@ -56,7 +56,6 @@ export default function InstructorDashboard() {
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleCourseCreated = useCallback(
     (newCourses: any[]) => {
-      // If API returns updated list, use it; otherwise refetch
       if (newCourses?.length > 0) {
         setCourses(newCourses);
       } else {
@@ -82,6 +81,7 @@ export default function InstructorDashboard() {
       if (res) {
         setCourses((prev) => prev.filter((c) => c._id !== courseToDelete.id));
         toast.success("Course deleted successfully!");
+        window.location.reload();
       }
     } finally {
       setIsDeleting(null);
