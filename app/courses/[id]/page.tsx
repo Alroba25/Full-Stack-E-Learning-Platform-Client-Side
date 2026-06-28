@@ -312,9 +312,9 @@ export default function CoursePage({
                         </div>
                       ) : (
                         <>
-                          <button className="mb-3 cursor-pointer group flex items-center justify-center gap-2 w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95 rounded-lg">
+                          {/* <button className="mb-3 cursor-pointer group flex items-center justify-center gap-2 w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95 rounded-lg">
                             <span>Add to cart</span>
-                          </button>
+                          </button> */}
                           <Link
                             href={`/checkout?courseId=${id}`}
                             className="w-full py-4 border-2 border-white text-white font-extrabold hover:bg-white/5 transition-all duration-300 rounded-lg flex items-center justify-center"
