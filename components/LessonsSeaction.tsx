@@ -39,7 +39,9 @@ export default function LessonsSeaction({ id }: { id: string }) {
             >
               <div className="flex items-center gap-4">
                 <ChevronRight size={18} className="text-white/20" />
-                <span className="font-semibold text-white/60 text-sm tracking-wide">{section?.title}</span>
+                <span className="font-semibold text-white/60 text-sm tracking-wide">
+                  {section?.title}
+                </span>
               </div>
               <div className="flex items-center justify-center size-8 rounded-lg bg-white/5 border border-white/5 text-white/60">
                 <LockKeyhole size={20} />
