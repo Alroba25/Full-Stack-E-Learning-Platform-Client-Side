@@ -90,7 +90,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-100 bg-[#050505] backdrop-blur-none flex items-center justify-between px-6 py-4 md:px-16 border-b border-white/5 transition-all">
       <Link href="/" className="relative hover:opacity-90 transition-opacity">
         <img
-          src="/logo.png"
+          src="/Logo.png"
           alt="Logo"
           className="h-14 md:h-16 w-auto object-contain"
         />
