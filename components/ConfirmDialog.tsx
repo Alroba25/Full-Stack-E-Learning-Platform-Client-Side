@@ -44,9 +44,6 @@ export default function ConfirmDialog({
             <p className="text-xs font-semibold text-white/50 mb-3 uppercase tracking-widest">
               Proof Image
             </p>
-            <p className="text-sm text-white/50 leading-relaxed mb-8">
-              {message}
-            </p>
             <img
               src={image}
               alt="Payment Proof"

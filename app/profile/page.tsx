@@ -1,6 +1,12 @@
 "use client";
 import { UserState } from "@/Interfaces";
-import { getProfile, getMyCourses, getToken, removeToken } from "@/Lib";
+import {
+  getProfile,
+  getMyCourses,
+  getToken,
+  removeToken,
+  getStudentOrders,
+} from "@/Lib";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
@@ -20,6 +26,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserState | null>(null);
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [orders, setOrders] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +51,20 @@ export default function ProfilePage() {
         setIsLoading(false);
       }
     };
+    // Get Orders Handelar
+    const fetchOrder = async () => {
+      try {
+        const data = await getStudentOrders();
+        const { payments } = data;
+        if (payments?.length) {
+          setOrders(payments);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchData();
+    fetchOrder();
   }, [router]);
   console.log(profile);
   const handleLogout = () => {
@@ -215,7 +235,7 @@ export default function ProfilePage() {
                   <BookOpen className="text-[#4facfe]" size={24} />
                 </div>
                 <span className="text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-white to-white/50">
-                  {0}
+                  {orders?.length}
                 </span>
               </div>
               <div className="flex items-center justify-between mb-4">
@@ -244,23 +264,23 @@ export default function ProfilePage() {
               </Link>
             </div>
 
-            {enrollments.length > 0 ? (
+            {enrollments?.length > 0 ? (
               <div className="space-y-4">
-                {enrollments.slice(0, 3).map((enrollment, idx) => {
+                {enrollments?.slice(0, 3).map((enrollment, idx) => {
                   const course = enrollment.course;
                   if (!course) return null;
                   return (
                     <Link
-                      href={`/learning?courseId=${course._id || course.id}`}
+                      href={`/learning?courseId=${course?._id || course?.id}`}
                       key={idx}
                       className="block bg-black/40 border border-white/5 hover:border-white/20 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)] group"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-xl bg-white/5 shrink-0 overflow-hidden relative">
-                          {course.thumbnail ? (
+                          {course?.thumbnail ? (
                             <img
-                              src={course.thumbnail}
-                              alt={course.title}
+                              src={course?.thumbnail}
+                              alt={course?.title}
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -271,7 +291,7 @@ export default function ProfilePage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-bold text-white truncate group-hover:text-[#4facfe] transition-colors">
-                            {course.title}
+                            {course?.title}
                           </h4>
                           <div className="flex items-center gap-4 mt-2">
                             <div className="flex items-center gap-1.5 text-xs text-[#888] font-medium">
@@ -280,7 +300,7 @@ export default function ProfilePage() {
                                 className="text-green-500"
                               />
                               <span>
-                                {enrollment.completedLessons?.length || 0}{" "}
+                                {enrollment?.completedLessons?.length || 0}{" "}
                                 lessons done
                               </span>
                             </div>

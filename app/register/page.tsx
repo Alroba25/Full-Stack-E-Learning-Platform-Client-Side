@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useCallback } from "react";
 import Link from "next/link";
 import { registerInputs } from "@/Data";
@@ -7,11 +6,10 @@ import { SubmitHandler } from "@/Lib";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
+import { toast } from "sonner";
 interface FormState {
   [key: string]: string;
 }
-
 export default function Register() {
   const router = useRouter();
   const [formData, setFormData] = useState<FormState>({
@@ -20,24 +18,47 @@ export default function Register() {
     password: "",
   });
   const [isInstructor, setIsInstructor] = useState<boolean>(false);
-
+  const [errors, setErrors] = useState<string>("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name === "password") {
+      setErrors("");
+    }
   };
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      if (isInstructor) {
-        SubmitHandler(e, formData, "/register/instructor", router);
-        setFormData({ name: "", email: "", password: "" });
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      setErrors("");
+
+      const result = await SubmitHandler(formData, "/register", router);
+
+      if (!result?.success) {
+        if (result.message.toLowerCase().includes("password")) {
+          setErrors(result.message);
+        } else {
+          toast.error(result.message);
+        }
+
         return;
       }
-      SubmitHandler(e, formData, "/register", router);
-      setFormData({ name: "", email: "", password: "" });
+
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      });
     },
     [formData, isInstructor, router],
   );
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white font-sans relative overflow-hidden">
       {/* Background glow effects */}
@@ -92,6 +113,9 @@ export default function Register() {
                 value={formData[input.name] || ""}
                 onChange={handleChange}
               />
+              {input.name === "password" && errors && (
+                <p className="mt-2 text-sm text-red-500">{errors}</p>
+              )}
             </div>
           ))}
 
@@ -110,7 +134,7 @@ export default function Register() {
           </div>
 
           <button
-            className="w-full py-4 bg-linear-to-br from-[#667eea] to-[#764ba2] rounded-xl text-white font-bold text-lg hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(118,75,162,0.4)] transition-all mt-4"
+            className="cursor-pointer w-full py-4 bg-linear-to-br from-[#667eea] to-[#764ba2] rounded-xl text-white font-bold text-lg hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(118,75,162,0.4)] transition-all mt-4"
             type="submit"
           >
             Register
@@ -121,7 +145,7 @@ export default function Register() {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="text-[#00f2fe] font-semibold hover:underline"
+            className="cursor-pointer text-[#00f2fe] font-semibold hover:underline"
           >
             Log in
           </Link>

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -33,10 +33,13 @@ import {
   getAdminAllPayments,
   getAllCourses,
   getAllUsersByAdmin,
+  getNotifications,
+  markAllNotificationsAsRead,
   toggleUserAdmin,
 } from "@/Lib";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import StatCard from "@/components/StatusCard";
+import DropDownNotification from "@/components/DropDownNotification";
 
 // ─── Tab Type ─────────────────────────────────────────────────────────────────
 type Tab = "overview" | "courses" | "users" | "payments";
@@ -84,7 +87,9 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [proofImage, setProofImage] = useState<string | null>(null);
+  const [notification, setNotification] = useState<any[]>([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
@@ -214,11 +219,11 @@ export default function AdminDashboard() {
     if (data) fetchAdminPaymentData();
   };
 
-  const handleViewProof = (image: string) => {
+  const handleViewProof = (image: string, message: string) => {
     setConfirmDialog({
       open: true,
       title: "Payment Proof",
-      message: "",
+      message: `The Phone Number for Payment : ${message}`,
       image,
       confirmLabel: "Close",
       confirmClass:
@@ -228,10 +233,38 @@ export default function AdminDashboard() {
     });
   };
 
+  const fetchNotification = async () => {
+    const data = await getNotifications();
+    if (data) {
+      setNotification(data.notifications);
+    }
+  };
+  useEffect(() => {
+    const markRead = async () => {
+      if (open && notification.some((n: any) => !n.isRead)) {
+        await markAllNotificationsAsRead();
+        fetchNotification();
+      }
+    };
+    markRead();
+  }, [open]);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   useEffect(() => {
     fetchAdminPaymentData();
     fetchCourses();
     fetchAdminUserData();
+    fetchNotification();
   }, []);
 
   // ── Tabs Config ────────────────────────────────────────────────────────────
@@ -265,8 +298,6 @@ export default function AdminDashboard() {
       badge: payments?.length || undefined,
     },
   ];
-  console.log("courses data", courses);
-  console.log("users data", users);
   console.log("data", payments);
   return (
     <div className="min-h-screen bg-[#070709] text-white font-sans overflow-x-hidden">
@@ -300,15 +331,25 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <button className="size-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all cursor-pointer">
-                <Bell size={18} />
+            <div ref={dropdownRef} className="relative">
+              <button
+                onClick={() => setOpen((prev) => !prev)}
+                className="cursor-pointer relative p-2.5 rounded-xl transition-all active:scale-95 hover:bg-white/5 text-[#a0a0a0] hover:text-white"
+              >
+                <Bell className="size-5" />
+
+                {notification?.filter((n: any) => !n.isRead).length > 0 && (
+                  <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                  </span>
+                )}
               </button>
-              {0 > 0 && (
-                <span className="absolute -top-1 -right-1 size-4 bg-amber-500 rounded-full text-[9px] font-black text-black flex items-center justify-center">
-                  {0}
-                </span>
-              )}
+              <DropDownNotification
+                notifications={notification}
+                open={open}
+                dropdownRef={dropdownRef}
+              />
             </div>
             <button
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold text-white/60 hover:text-white hover:bg-white/10 transition-all cursor-pointer disabled:opacity-40"
@@ -381,8 +422,8 @@ export default function AdminDashboard() {
                 label="Total Revenue"
                 value={`$${payments
                   ?.filter((p: any) => p.status === "approved")
-                  .reduce((acc: any, p: any) => acc + p.course.price, 0)
-                  .toLocaleString()}`}
+                  .reduce((acc: number, p: any) => acc + p.course.price, 0)
+                  .toLocaleString("en-US")}`}
                 sub="+18% vs last month"
                 gradient="bg-gradient-to-br from-purple-600 to-purple-800"
                 glow="bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.08),transparent_60%)]"
@@ -927,7 +968,10 @@ export default function AdminDashboard() {
                               <button
                                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-400 hover:bg-blue-500/20 transition-all cursor-pointer"
                                 onClick={() =>
-                                  handleViewProof(payment?.paymentProof)
+                                  handleViewProof(
+                                    payment?.paymentProof,
+                                    payment?.phoneNumber,
+                                  )
                                 }
                               >
                                 <Image size={12} />

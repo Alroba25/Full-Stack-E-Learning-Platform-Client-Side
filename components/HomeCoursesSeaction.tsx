@@ -1,14 +1,15 @@
 "use client";
-import { getAllCourses } from "@/Lib";
+import { getCoursesForHomePage } from "@/Lib";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function HomeCoursesSeaction() {
+  const router = useRouter();
   const [courses, setCourses] = useState([]);
   useEffect(() => {
     const fetchCourses = async () => {
-      const data = await getAllCourses();
-      // Safeguard: Extract array if data is an object like { courses: [...] }
+      const data = await getCoursesForHomePage();
       setCourses(Array.isArray(data) ? data : data?.courses || []);
     };
     fetchCourses();
@@ -17,6 +18,9 @@ export default function HomeCoursesSeaction() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
       {courses.slice(0, 3).map((course: any) => (
         <div
+          onClick={() => {
+            router.push(`/courses/${course._id}`);
+          }}
           key={course._id}
           className="bg-white/2 border border-white/5 rounded-[20px] overflow-hidden hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_20px_rgba(138,43,226,0.1)] hover:border-white/15 backdrop-blur-md group transition-all"
         >

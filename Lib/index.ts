@@ -16,7 +16,6 @@ export const getToken = () => {
   }
   return null;
 };
-// Helper for handling unauthorized access or expired tokens
 const handleUnauthorized = (router?: any, message?: string) => {
   removeToken();
   if (router) {
@@ -27,12 +26,10 @@ const handleUnauthorized = (router?: any, message?: string) => {
   });
 };
 export const SubmitHandler = async (
-  e: React.FormEvent,
   userData: any,
   url: string,
   router?: any,
 ) => {
-  e.preventDefault();
   try {
     const res = await fetch(`${BASE_URL}${url}`, {
       method: "POST",
@@ -41,8 +38,12 @@ export const SubmitHandler = async (
       },
       body: JSON.stringify(userData),
     });
+
     const data = await res.json();
+
     if (res.ok) {
+      addToken(data.token);
+
       toast.success(data.message, {
         duration: 1000,
         onAutoClose: () => {
@@ -51,21 +52,35 @@ export const SubmitHandler = async (
           }
         },
       });
-      addToken(data.token);
-    } else {
-      if (
-        res.status === 401 ||
-        data.message === "Login timeout, please login again."
-      ) {
-        handleUnauthorized(router, data.message);
-      } else {
-        toast.error(data.message, {
-          duration: 1000,
-        });
-      }
+
+      return {
+        success: true,
+      };
     }
+
+    if (
+      res.status === 401 ||
+      data.message === "Login timeout, please login again."
+    ) {
+      handleUnauthorized(router, data.message);
+
+      return {
+        success: false,
+        message: data.message,
+      };
+    }
+
+    return {
+      success: false,
+      message: data.message,
+    };
   } catch (error) {
     console.log(error);
+
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
   }
 };
 export const getAllCourses = async (router?: any, filters?: any) => {
@@ -757,6 +772,109 @@ export const deleteUserByAdmin = async (userId: string) => {
       toast.success(data.message, {
         duration: 1000,
       });
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const getStudentOrders = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/my-orders`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const getNotifications = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/notifications`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const markAllNotificationsAsRead = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/notifications/read-all`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      toast.error(data.message, {
+        duration: 1000,
+      });
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong", {
+      duration: 1000,
+    });
+    return null;
+  }
+};
+export const getCoursesForHomePage = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/home-courses`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
       return data;
     } else {
       toast.error(data.message, {

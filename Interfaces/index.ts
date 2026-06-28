@@ -19,10 +19,11 @@ export interface CourseState {
   createdAt: Date;
   updatedAt: Date;
   rating?: number;
-  category?: string;
+  category?: string[];
   level?: string;
   articals: string[];
   resources: string[];
+  paymentStatus: "approved" | "pending" | "rejected";
 }
 export interface LessonState {
   id: number;
@@ -56,3 +57,11 @@ export interface IFilter {
   rating: number | null;
   level: string[];
 }
+export interface DropDownNotificationProps {
+  notifications: any[];
+  open: boolean;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
+}
+export type Tab = "overview" | "courses" | "users" | "payments";
+export type PaymentMethod = "vodafone" | "etisalat" | "orange";
+export type OrderStatus = "approved" | "pending" | "rejected";

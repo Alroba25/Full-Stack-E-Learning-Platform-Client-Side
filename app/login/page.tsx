@@ -6,6 +6,7 @@ import { loginInputs } from "@/Data";
 import { SubmitHandler } from "@/Lib";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface FormState {
   [key: string]: string;
@@ -17,15 +18,42 @@ export default function Login() {
     email: "",
     password: "",
   });
-
+  const [errors, setErrors] = useState<string>("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name === "password") {
+      setErrors("");
+    }
   };
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      SubmitHandler(e, formData, "/login", router);
-      setFormData({ email: "", password: "" });
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      setErrors("");
+
+      const result = await SubmitHandler(formData, "/login", router);
+
+      if (!result?.success) {
+        if (result.message.toLowerCase().includes("password")) {
+          setErrors(result.message);
+        } else {
+          toast.error(result.message);
+        }
+
+        return;
+      }
+
+      setFormData({
+        email: "",
+        password: "",
+      });
     },
     [formData, router],
   );
@@ -84,11 +112,15 @@ export default function Login() {
                 value={formData[input.name] || ""}
                 onChange={handleChange}
               />
+
+              {input.name === "password" && errors && (
+                <p className="mt-2 text-sm text-red-500">{errors}</p>
+              )}
             </div>
           ))}
 
           <button
-            className="w-full py-4 bg-linear-to-br from-[#667eea] to-[#764ba2] rounded-xl text-white font-bold text-lg hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(118,75,162,0.4)] transition-all mt-4"
+            className="cursor-pointer w-full py-4 bg-linear-to-br from-[#667eea] to-[#764ba2] rounded-xl text-white font-bold text-lg hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(118,75,162,0.4)] transition-all mt-4"
             type="submit"
           >
             Log In

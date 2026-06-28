@@ -1,8 +1,13 @@
 "use client";
 import Link from "next/link";
-import { getToken, removeToken } from "@/Lib";
+import {
+  getNotifications,
+  getToken,
+  markAllNotificationsAsRead,
+  removeToken,
+} from "@/Lib";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   UserRound,
   BookOpen,
@@ -14,40 +19,54 @@ import {
   LogIn,
   UserPlus,
   Menu,
-  X
+  X,
 } from "lucide-react";
+import DropDownNotification from "./DropDownNotification";
 
 export default function Navbar() {
   const [token, setToken] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
-  const [notificationCount] = useState(3); // Mock notifications count
+  const [notification, setNotification] = useState<any[]>([]);
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const fetchNotification = async () => {
+    const data = await getNotifications();
+    if (data) {
+      setNotification(data.notifications);
+    }
+  };
   useEffect(() => {
-    setToken(getToken());
-
-    const updateCart = () => {
-      try {
-        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-        setCartCount(cart.length);
-      } catch {
-        setCartCount(0);
+    const markRead = async () => {
+      if (open && notification.some((n: any) => !n.isRead)) {
+        await markAllNotificationsAsRead();
+        fetchNotification();
       }
     };
-
-    updateCart();
-
-    // Listen for storage changes or custom event
-    window.addEventListener("storage", updateCart);
-    window.addEventListener("cart-updated", updateCart);
-    
-    return () => {
-      window.removeEventListener("storage", updateCart);
-      window.removeEventListener("cart-updated", updateCart);
-    };
+    markRead();
+  }, [open]);
+  useEffect(() => {
+    setToken(getToken());
   }, []);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchNotification();
+    }
+  }, [token]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -62,15 +81,14 @@ export default function Navbar() {
   const navLinks = [
     { name: "Courses", href: "/courses", icon: BookOpen },
     { name: "AI Assistant", href: "/ai-assistant", icon: Sparkles },
-    ...(token ? [{ name: "My Courses", href: "/my-courses", icon: GraduationCap }] : [])
+    ...(token
+      ? [{ name: "My Courses", href: "/my-courses", icon: GraduationCap }]
+      : []),
   ];
 
   return (
-    <nav className="sticky top-0 z-100 flex items-center justify-between px-6 py-4 md:px-16 bg-[#050505]/75 backdrop-blur-xl border-b border-white/5 transition-all">
-      <Link
-        href="/"
-        className="relative hover:opacity-90 transition-opacity"
-      >
+    <nav className="sticky top-0 z-100 bg-[#050505] backdrop-blur-none flex items-center justify-between px-6 py-4 md:px-16 border-b border-white/5 transition-all">
+      <Link href="/" className="relative hover:opacity-90 transition-opacity">
         <img
           src="/logo.png"
           alt="Logo"
@@ -89,7 +107,9 @@ export default function Navbar() {
               href={link.href}
               className={`group flex items-center gap-2 py-2 px-3.5 rounded-xl transition-all duration-300 hover:bg-white/5 ${isActive ? "bg-white/5 text-white" : "text-[#a0a0a0] hover:text-white"}`}
             >
-              <Icon className={`size-4.5 transition-colors duration-300 ${isActive ? "text-[#00f2fe]" : "text-[#a0a0a0] group-hover:text-[#00f2fe]"}`} />
+              <Icon
+                className={`size-4.5 transition-colors duration-300 ${isActive ? "text-[#00f2fe]" : "text-[#a0a0a0] group-hover:text-[#00f2fe]"}`}
+              />
               <span className="font-semibold text-sm tracking-wide">
                 {link.name}
               </span>
@@ -100,36 +120,43 @@ export default function Navbar() {
 
       {/* Header Actions (Right) */}
       <div className="flex items-center gap-2 md:gap-4">
-        {/* Cart Button */}
+       {/* { Cart Button}
         <Link
           href="/cart"
           className={`relative p-2.5 rounded-xl transition-all active:scale-95 hover:bg-white/5 ${pathname === "/cart" ? "text-white bg-white/5" : "text-[#a0a0a0] hover:text-white"}`}
         >
           <ShoppingCart className="size-5" />
-          {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-blue-500 text-[10px] font-black text-white border border-[#050505]">
-              {cartCount}
-            </span>
-          )}
-        </Link>
+          <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-blue-500 text-[10px] font-black text-white border border-[#050505]"></span>
+        </Link> */}
 
         {/* Notifications Button */}
-        <button className="relative p-2.5 rounded-xl transition-all active:scale-95 hover:bg-white/5 text-[#a0a0a0] hover:text-white">
-          <Bell className="size-5" />
-          {notificationCount > 0 && (
-            <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-            </span>
-          )}
-        </button>
+        <div ref={dropdownRef} className="relative">
+          <button
+            onClick={() => setOpen((prev) => !prev)}
+            className="cursor-pointer relative p-2.5 rounded-xl transition-all active:scale-95 hover:bg-white/5 text-[#a0a0a0] hover:text-white"
+          >
+            <Bell className="size-5" />
+
+            {notification?.filter((n: any) => !n.isRead).length > 0 && (
+              <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+              </span>
+            )}
+          </button>
+          <DropDownNotification
+            notifications={notification}
+            open={open}
+            dropdownRef={dropdownRef}
+          />
+        </div>
 
         {/* Auth / Profile Actions */}
         <div className="hidden md:flex items-center gap-4">
           {token ? (
             <>
-              <Link 
-                href="/profile" 
+              <Link
+                href="/profile"
                 className={`flex items-center gap-2 p-2.5 rounded-xl hover:bg-white/5 text-[#a0a0a0] hover:text-white transition-all active:scale-95 ${pathname === "/profile" ? "text-white bg-white/5" : ""}`}
               >
                 <UserRound className="size-5" />
@@ -171,13 +198,17 @@ export default function Navbar() {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="md:hidden p-2.5 rounded-xl hover:bg-white/5 text-[#a0a0a0] hover:text-white transition-all active:scale-95"
         >
-          {isMobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          {isMobileMenuOpen ? (
+            <X className="size-5" />
+          ) : (
+            <Menu className="size-5" />
+          )}
         </button>
       </div>
 
       {/* Mobile Menu Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-x-0 top-[73px] bottom-0 z-40 bg-[#050505]/95 backdrop-blur-2xl border-t border-white/5 flex flex-col p-6 gap-6 transition-all duration-300 animate-in fade-in slide-in-from-top-5">
+        <div className="md:hidden fixed inset-x-0 top-[73px] bottom-0 z-9999 bg-[#050505]/85 backdrop-blur-xl flex flex-col p-6">
           <div className="flex flex-col gap-3">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;

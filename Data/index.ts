@@ -1,3 +1,6 @@
+import { Tab } from "@/Interfaces";
+import {  LayoutDashboard,BookOpen,Users,CreditCard } from "lucide-react";
+import { ReactNode } from "react";
 export const loginInputs = [
   {
     id: "email",

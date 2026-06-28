@@ -42,6 +42,7 @@ export default function CoursePage({
   const [course, setCourse] = useState<CourseState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [haveCourse, setHaveCourse] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<string>("");
 
   useEffect(() => {
     if (!token) {
@@ -55,8 +56,8 @@ export default function CoursePage({
           getCourse(id, router),
           getMyCourses(router),
         ]);
-
         setCourse(courseData?.course || courseData);
+        setPaymentStatus(courseData?.paymentStatus);
 
         if (myCoursesData && myCoursesData.enrollments) {
           const isEnrolled = myCoursesData.enrollments.some((e: any) => {
@@ -91,7 +92,6 @@ export default function CoursePage({
   if (isLoading) {
     return <LoadingSkeleton />;
   }
-  console.log(course);
   return (
     <>
       <div className="min-h-screen bg-black text-white font-sans selection:bg-[#4facfe]/30">
@@ -153,9 +153,16 @@ export default function CoursePage({
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-white/60">Category:</span>
-                  <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-white font-medium">
-                    {course?.category || "Programming"}
-                  </span>
+                  {course?.category && course?.category.length > 0
+                    ? course?.category?.map((category: string, i: number) => (
+                        <span
+                          key={i}
+                          className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-white font-medium"
+                        >
+                          {category}
+                        </span>
+                      ))
+                    : "No Category"}
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-white/60">Level:</span>
@@ -297,6 +304,12 @@ export default function CoursePage({
                           <span>Countinue the course</span>
                           <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
+                      ) : paymentStatus === "pending" ? (
+                        <div>
+                          <button className="cursor-not-allowed w-full py-4 border-2 border-blue-400 text-blue-400 font-extrabold rounded-lg flex items-center justify-center">
+                            Pending
+                          </button>
+                        </div>
                       ) : (
                         <>
                           <button className="mb-3 cursor-pointer group flex items-center justify-center gap-2 w-full py-4 bg-linear-to-r from-[#a435f0] to-[#8710d8] hover:shadow-[0_8px_25px_rgba(164,53,240,0.4)] text-white font-extrabold transition-all duration-300 transform hover:-translate-y-1 active:scale-95 rounded-lg">
