@@ -1,23 +1,6 @@
 import { toast } from "sonner";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-export const addToken = (token: string) => {
-  if (typeof window !== "undefined") {
-    return localStorage.setItem("token", token);
-  }
-};
-export const removeToken = () => {
-  if (typeof window !== "undefined") {
-    return localStorage.removeItem("token");
-  }
-};
-export const getToken = () => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("token");
-  }
-  return null;
-};
 const handleUnauthorized = (router?: any, message?: string) => {
-  removeToken();
   if (router) {
     router.push("/login");
   }
@@ -43,8 +26,6 @@ export const SubmitHandler = async (
     const data = await res.json();
 
     if (res.ok) {
-      addToken(data.token);
-
       toast.success(data.message, {
         duration: 1000,
         onAutoClose: () => {
@@ -103,7 +84,6 @@ export const getAllCourses = async (router?: any, filters?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -134,7 +114,6 @@ export const getCourse = async (id: string, router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -165,7 +144,6 @@ export const getCourseLessons = async (courseId: string, router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -196,7 +174,6 @@ export const enrollInCourse = async (courseId: string, router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -230,7 +207,6 @@ export const getMyCourses = async (router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -261,7 +237,6 @@ export const makelessonCompleted = async (lessonId: string, router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -295,7 +270,6 @@ export const getProfile = async (router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -326,7 +300,6 @@ export const getInstructorCourses = async (router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -357,7 +330,6 @@ export const getInstrucortCoursesUsers = async (router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -388,7 +360,6 @@ export const createCourse = async (courseData: any, router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify(courseData),
     });
@@ -430,11 +401,7 @@ export const addLesson = async (
     const res = await fetch(`${BASE_URL}/course/${courseId}/lessons`, {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify(lessonData),
+      body: lessonData,
     });
 
     const data = await res.json();
@@ -472,7 +439,6 @@ export const deleteCourse = async (courseId: string, router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -510,7 +476,6 @@ export const askAI = async (message: string) => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ message }),
   });
@@ -524,8 +489,6 @@ export const createPayment = async (paymentData: any, router?: any) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-
-        Authorization: `Bearer ${getToken()}`,
       },
 
       body: JSON.stringify(paymentData),
@@ -543,7 +506,6 @@ export const getChatHistory = async () => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
     },
   });
 
@@ -556,7 +518,6 @@ export const clearChatHistory = async () => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -588,7 +549,6 @@ export const getAdminAllPayments = async () => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -615,7 +575,6 @@ export const adminApprovePayment = async (paymentId: string) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -645,7 +604,6 @@ export const adminRejectPayment = async (paymentId: string) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -675,7 +633,6 @@ export const getCoursesByAdmin = async () => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -702,7 +659,6 @@ export const deleteCourseByAdmin = async (courseId: string) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -732,7 +688,6 @@ export const getAllUsersByAdmin = async () => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -759,7 +714,6 @@ export const toggleUserAdmin = async (userId: string) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -789,7 +743,6 @@ export const deleteUserByAdmin = async (userId: string) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -819,7 +772,6 @@ export const getStudentOrders = async () => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -846,7 +798,6 @@ export const getNotifications = async () => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
@@ -873,7 +824,6 @@ export const markAllNotificationsAsRead = async () => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json();
