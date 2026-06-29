@@ -33,6 +33,7 @@ export const SubmitHandler = async (
   try {
     const res = await fetch(`${BASE_URL}${url}`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -99,6 +100,7 @@ export const getAllCourses = async (router?: any, filters?: any) => {
 
     const res = await fetch(`${BASE_URL}/courses?${query.toString()}`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -129,6 +131,7 @@ export const getCourse = async (id: string, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/course/${id}`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -159,6 +162,7 @@ export const getCourseLessons = async (courseId: string, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/course/${courseId}/lessons`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -189,6 +193,7 @@ export const enrollInCourse = async (courseId: string, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/enroll/${courseId}`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -222,6 +227,7 @@ export const getMyCourses = async (router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/my-courses`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -252,6 +258,7 @@ export const makelessonCompleted = async (lessonId: string, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/lesson/${lessonId}/complete`, {
       method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -285,6 +292,7 @@ export const getProfile = async (router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/profile`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -315,6 +323,7 @@ export const getInstructorCourses = async (router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/instructor-courses`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -345,6 +354,7 @@ export const getInstrucortCoursesUsers = async (router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/instructor-courses-users`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -375,6 +385,7 @@ export const createCourse = async (courseData: any, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/course`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -418,6 +429,7 @@ export const addLesson = async (
   try {
     const res = await fetch(`${BASE_URL}/course/${courseId}/lessons`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -457,6 +469,7 @@ export const deleteCourse = async (courseId: string, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/instructor-course/${courseId}`, {
       method: "DELETE",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -494,6 +507,7 @@ export const deleteCourse = async (courseId: string, router?: any) => {
 export const askAI = async (message: string) => {
   const res = await fetch(`${BASE_URL}/ai/chat`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
@@ -507,7 +521,7 @@ export const createPayment = async (paymentData: any, router?: any) => {
   try {
     const res = await fetch(`${BASE_URL}/payment`, {
       method: "POST",
-
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
 
@@ -526,7 +540,9 @@ export const createPayment = async (paymentData: any, router?: any) => {
 };
 export const getChatHistory = async () => {
   const res = await fetch(`${BASE_URL}/ai/history`, {
+    credentials: "include",
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
   });
@@ -537,6 +553,7 @@ export const clearChatHistory = async () => {
   try {
     const res = await fetch(`${BASE_URL}/ai/history`, {
       method: "DELETE",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -568,6 +585,7 @@ export const getAdminAllPayments = async () => {
   try {
     const res = await fetch(`${BASE_URL}/admin/payments`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -594,6 +612,7 @@ export const adminApprovePayment = async (paymentId: string) => {
   try {
     const res = await fetch(`${BASE_URL}/admin/payments/${paymentId}/approve`, {
       method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -623,6 +642,7 @@ export const adminRejectPayment = async (paymentId: string) => {
   try {
     const res = await fetch(`${BASE_URL}/admin/payments/${paymentId}/reject`, {
       method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -652,6 +672,7 @@ export const getCoursesByAdmin = async () => {
   try {
     const res = await fetch(`${BASE_URL}/admin/courses`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -678,6 +699,7 @@ export const deleteCourseByAdmin = async (courseId: string) => {
   try {
     const res = await fetch(`${BASE_URL}/admin/courses/${courseId}`, {
       method: "DELETE",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -707,6 +729,7 @@ export const getAllUsersByAdmin = async () => {
   try {
     const res = await fetch(`${BASE_URL}/admin/users`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -733,6 +756,7 @@ export const toggleUserAdmin = async (userId: string) => {
   try {
     const res = await fetch(`${BASE_URL}/admin/users/${userId}/toggle-admin`, {
       method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -762,6 +786,7 @@ export const deleteUserByAdmin = async (userId: string) => {
   try {
     const res = await fetch(`${BASE_URL}/admin/users/${userId}`, {
       method: "DELETE",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -791,6 +816,7 @@ export const getStudentOrders = async () => {
   try {
     const res = await fetch(`${BASE_URL}/my-orders`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -817,6 +843,7 @@ export const getNotifications = async () => {
   try {
     const res = await fetch(`${BASE_URL}/notifications`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -843,6 +870,7 @@ export const markAllNotificationsAsRead = async () => {
   try {
     const res = await fetch(`${BASE_URL}/notifications/read-all`, {
       method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -869,6 +897,7 @@ export const getCoursesForHomePage = async () => {
   try {
     const res = await fetch(`${BASE_URL}/home-courses`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

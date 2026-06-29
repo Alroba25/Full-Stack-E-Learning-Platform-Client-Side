@@ -40,6 +40,12 @@ import {
 import ConfirmDialog from "@/components/ConfirmDialog";
 import StatCard from "@/components/StatusCard";
 import DropDownNotification from "@/components/DropDownNotification";
+import {
+  ConfirmDialogProps,
+  CourseState,
+  PaymentItemState,
+  UserState,
+} from "@/Interfaces";
 
 // ─── Tab Type ─────────────────────────────────────────────────────────────────
 type Tab = "overview" | "courses" | "users" | "payments";
@@ -83,23 +89,14 @@ function PaymentBadge({ status }: { status: string }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
-  const [courses, setCourses] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
-  const [payments, setPayments] = useState<any[]>([]);
+  const [courses, setCourses] = useState<CourseState[]>([]);
+  const [users, setUsers] = useState<UserState[]>([]);
+  const [payments, setPayments] = useState<PaymentItemState[]>([]);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<any[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [confirmDialog, setConfirmDialog] = useState<{
-    open: boolean;
-    title: string;
-    message: string;
-    confirmLabel: string;
-    confirmClass: string;
-    image?: string;
-    iconsBgClass: string;
-    onConfirm: () => void;
-  }>({
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogProps>({
     open: false,
     title: "",
     message: "",
@@ -111,9 +108,6 @@ export default function AdminDashboard() {
   });
 
   const closeDialog = () => setConfirmDialog((d) => ({ ...d, open: false }));
-
-  // ── Stats ──────────────────────────────────────────────────────────────────
-  const totalStudents = users.filter((u) => u.role === "student").length;
 
   // ── Course Handlers ────────────────────────────────────────────────────────
 
@@ -298,7 +292,6 @@ export default function AdminDashboard() {
       badge: payments?.length || undefined,
     },
   ];
-  console.log("data", payments);
   return (
     <div className="min-h-screen bg-[#070709] text-white font-sans overflow-x-hidden">
       {/* ── Ambient Blobs ── */}
@@ -421,9 +414,9 @@ export default function AdminDashboard() {
               <StatCard
                 label="Total Revenue"
                 value={`$${payments
-                  ?.filter((p: any) => p.status === "approved")
-                  .reduce((acc: number, p: any) => acc + p.course.price, 0)
-                  .toLocaleString("en-US")}`}
+                  ?.filter((p: any) => p?.status === "approved")
+                  ?.reduce((acc: number, p: any) => acc + p?.course?.price, 0)
+                  ?.toLocaleString("en-US")}`}
                 sub="+18% vs last month"
                 gradient="bg-gradient-to-br from-purple-600 to-purple-800"
                 glow="bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.08),transparent_60%)]"
@@ -432,7 +425,7 @@ export default function AdminDashboard() {
               <StatCard
                 label="Pending Payments"
                 value={
-                  payments.filter((p: any) => p.status === "pending").length
+                  payments?.filter((p: any) => p?.status === "pending")?.length
                 }
                 sub="Awaiting approval"
                 gradient="bg-gradient-to-br from-amber-600 to-amber-800"
@@ -479,7 +472,7 @@ export default function AdminDashboard() {
                           {c?.title}
                         </p>
                         <p className="text-xs text-white/30">
-                          {c.instructor?.name}
+                          {c.instructor?.name || "Deleted Instructor"}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
@@ -665,17 +658,17 @@ export default function AdminDashboard() {
                                 {course.title}
                               </p>
                               <p className="text-[10px] text-white/30 mt-0.5">
-                                {course.category
-                                  .map((c: string) => c)
-                                  .join(", ")}{" "}
-                                · {course.level}
+                                {course?.category
+                                  ?.map((c: string) => c)
+                                  ?.join(", ")}{" "}
+                                · {course?.level || ""}
                               </p>
                             </div>
                           </div>
                         </td>
                         <td className="px-4 py-4 hidden md:table-cell">
                           <span className="text-white/60 font-medium">
-                            {course.instructor.name}
+                            {course?.instructor?.name || "Deleted Instructor"}
                           </span>
                         </td>
                         <td className="px-4 py-4 hidden lg:table-cell">
@@ -897,7 +890,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {payments?.map((payment: any) => (
+                    {payments?.map((payment: PaymentItemState) => (
                       <tr
                         key={payment._id}
                         className="border-b border-white/4 hover:bg-white/2 transition-colors"
@@ -915,7 +908,9 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-4 py-4 hidden md:table-cell">
                           <span className="text-white/60 text-xs max-w-[160px] block truncate">
-                            {payment?.course?.title}
+                            {payment?.course
+                              ? payment?.course?.title
+                              : "Deleted Course"}
                           </span>
                         </td>
                         <td className="px-4 py-4 hidden sm:table-cell">

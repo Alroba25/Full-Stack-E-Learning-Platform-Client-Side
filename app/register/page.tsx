@@ -38,7 +38,9 @@ export default function Register() {
 
       setErrors("");
 
-      const result = await SubmitHandler(formData, "/register", router);
+      const result = isInstructor
+        ? await SubmitHandler(formData, "/register/instructor", router)
+        : await SubmitHandler(formData, "/register", router);
 
       if (!result?.success) {
         if (result.message.toLowerCase().includes("password")) {
